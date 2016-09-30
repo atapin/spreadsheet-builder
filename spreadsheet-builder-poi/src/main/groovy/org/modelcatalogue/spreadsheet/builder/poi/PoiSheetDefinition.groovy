@@ -6,6 +6,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.modelcatalogue.spreadsheet.api.Cell
 import org.modelcatalogue.spreadsheet.api.Sheet
+import org.modelcatalogue.spreadsheet.builder.api.Builder
 import org.modelcatalogue.spreadsheet.builder.api.RowDefinition
 import org.modelcatalogue.spreadsheet.builder.api.SheetDefinition
 
@@ -101,18 +102,18 @@ class PoiSheetDefinition implements SheetDefinition, Sheet {
     }
 
     @Override
-    void row(@DelegatesTo(RowDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.RowDefinition") Closure rowDefinition) {
+    void row(Builder<RowDefinition> rowDefinition) {
         PoiRowDefinition row = findOrCreateRow nextRowNumber++
-        row.with rowDefinition
+        rowDefinition.configure(row)
     }
 
     @Override
-    void row(int oneBasedRowNumber, @DelegatesTo(RowDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.RowDefinition") Closure rowDefinition) {
+    void row(int oneBasedRowNumber, Builder<RowDefinition> rowDefinition) {
         assert oneBasedRowNumber > 0
         nextRowNumber = oneBasedRowNumber
 
         PoiRowDefinition poiRow = findOrCreateRow oneBasedRowNumber - 1
-        poiRow.with rowDefinition
+        rowDefinition.configure(poiRow)
     }
 
     @Override
@@ -126,12 +127,12 @@ class PoiSheetDefinition implements SheetDefinition, Sheet {
     }
 
     @Override
-    void collapse(@DelegatesTo(SheetDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.SheetDefinition") Closure insideGroupDefinition) {
+    void collapse(Builder<SheetDefinition> insideGroupDefinition) {
         createGroup(true, insideGroupDefinition)
     }
 
     @Override
-    void group(@DelegatesTo(SheetDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.SheetDefinition") Closure insideGroupDefinition) {
+    void group(Builder<SheetDefinition>  insideGroupDefinition) {
         createGroup(false, insideGroupDefinition)
     }
 
@@ -146,9 +147,9 @@ class PoiSheetDefinition implements SheetDefinition, Sheet {
         sheet.protectSheet(password)
     }
 
-    private void createGroup(boolean collapsed, @DelegatesTo(SheetDefinition.class) Closure insideGroupDefinition) {
+    private void createGroup(boolean collapsed, Builder<SheetDefinition> insideGroupDefinition) {
         startPositions.push nextRowNumber
-        with insideGroupDefinition
+        insideGroupDefinition.configure(this)
 
         int startPosition = startPositions.pop()
 

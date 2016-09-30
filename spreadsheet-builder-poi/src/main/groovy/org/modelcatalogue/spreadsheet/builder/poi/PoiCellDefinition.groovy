@@ -1,7 +1,5 @@
 package org.modelcatalogue.spreadsheet.builder.poi
 
-import groovy.transform.stc.ClosureParams
-import groovy.transform.stc.FromString
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Name
 import org.apache.poi.ss.usermodel.Workbook
@@ -17,9 +15,8 @@ import org.codehaus.groovy.runtime.StringGroovyMethods
 import org.modelcatalogue.spreadsheet.api.Cell as SpreadsheetCell
 import org.modelcatalogue.spreadsheet.api.CellStyle
 import org.modelcatalogue.spreadsheet.api.Comment
-import org.modelcatalogue.spreadsheet.api.Table
 import org.modelcatalogue.spreadsheet.builder.api.AbstractCellDefinition
-
+import org.modelcatalogue.spreadsheet.builder.api.Builder
 import org.modelcatalogue.spreadsheet.builder.api.CellStyleDefinition
 import org.modelcatalogue.spreadsheet.builder.api.CommentDefinition
 import org.modelcatalogue.spreadsheet.builder.api.FontDefinition
@@ -146,12 +143,12 @@ class PoiCellDefinition extends AbstractCellDefinition implements Resolvable, Sp
     }
 
     @Override
-    void style(@DelegatesTo(CellStyleDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.CellStyleDefinition") Closure styleDefinition) {
+    void style(Builder<CellStyleDefinition> styleDefinition) {
         if (!poiCellStyle) {
             poiCellStyle = new PoiCellStyleDefinition(this)
         }
         poiCellStyle.checkSealed()
-        poiCellStyle.with styleDefinition
+        styleDefinition.configure(poiCellStyle)
     }
 
     @Override
@@ -167,9 +164,9 @@ class PoiCellDefinition extends AbstractCellDefinition implements Resolvable, Sp
     }
 
     @Override
-    void comment(@DelegatesTo(CommentDefinition.class) Closure commentDefinition) {
+    void comment(Builder<CommentDefinition> commentDefinition) {
         PoiCommentDefinition poiComment = new PoiCommentDefinition()
-        poiComment.with commentDefinition
+        commentDefinition.configure(poiComment)
         poiComment.applyTo xssfCell
     }
 
@@ -205,7 +202,7 @@ class PoiCellDefinition extends AbstractCellDefinition implements Resolvable, Sp
             return
         }
         poiCellStyle.checkSealed()
-        poiCellStyle.with row.sheet.workbook.getStyleDefinition(name)
+        row.sheet.workbook.getStyleDefinition(name).configure(poiCellStyle)
     }
 
     @Override
@@ -217,7 +214,7 @@ class PoiCellDefinition extends AbstractCellDefinition implements Resolvable, Sp
         }
         poiCellStyle.checkSealed()
         for (String name in names) {
-            poiCellStyle.with row.sheet.workbook.getStyleDefinition(name)
+            row.sheet.workbook.getStyleDefinition(name).configure(poiCellStyle)
         }
     }
 
@@ -227,7 +224,7 @@ class PoiCellDefinition extends AbstractCellDefinition implements Resolvable, Sp
     }
 
     @Override
-    void style(String name, @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.CellStyleDefinition") Closure styleDefinition) {
+    void style(String name, Builder<CellStyleDefinition> styleDefinition) {
         style row.sheet.workbook.getStyleDefinition(name)
         style styleDefinition
     }
@@ -300,7 +297,7 @@ class PoiCellDefinition extends AbstractCellDefinition implements Resolvable, Sp
     }
 
     @Override
-    void text(String run, @DelegatesTo(FontDefinition.class) @ClosureParams(value = FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.FontDefinition") Closure fontConfiguration) {
+    void text(String run, Builder<FontDefinition> fontConfiguration) {
         if (!run) {
             return
         }
@@ -316,7 +313,8 @@ class PoiCellDefinition extends AbstractCellDefinition implements Resolvable, Sp
         }
 
         PoiFontDefinition font = new PoiFontDefinition(xssfCell.row.sheet.workbook)
-        font.with fontConfiguration
+
+        fontConfiguration.configure(font)
 
         richTextParts << new RichTextPart(run, font, start, end)
     }

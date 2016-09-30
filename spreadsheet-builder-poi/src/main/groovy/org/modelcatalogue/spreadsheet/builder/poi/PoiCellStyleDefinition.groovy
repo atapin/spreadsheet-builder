@@ -17,6 +17,7 @@ import org.modelcatalogue.spreadsheet.builder.api.AbstractCellStyleDefinition
 import org.modelcatalogue.spreadsheet.builder.api.BorderDefinition
 
 import org.modelcatalogue.spreadsheet.api.Color
+import org.modelcatalogue.spreadsheet.builder.api.Builder
 import org.modelcatalogue.spreadsheet.builder.api.FontDefinition
 import org.modelcatalogue.spreadsheet.api.ForegroundFill
 import org.modelcatalogue.spreadsheet.api.Keywords
@@ -53,7 +54,7 @@ class PoiCellStyleDefinition extends AbstractCellStyleDefinition implements HTML
     @Override
     void base(String stylename) {
         checkSealed()
-        with workbook.getStyleDefinition(stylename)
+        workbook.getStyleDefinition(stylename).configure(this)
     }
 
     void checkSealed() {
@@ -160,12 +161,12 @@ class PoiCellStyleDefinition extends AbstractCellStyleDefinition implements HTML
     }
 
     @Override
-    void font(@DelegatesTo(FontDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.FontDefinition") Closure fontConfiguration) {
+    void font(Builder<FontDefinition> fontConfiguration) {
         checkSealed()
         if (!poiFont) {
             poiFont = new PoiFontDefinition(workbook.workbook, style)
         }
-        poiFont.with fontConfiguration
+        fontConfiguration.configure(poiFont)
     }
 
     @Override
@@ -228,10 +229,10 @@ class PoiCellStyleDefinition extends AbstractCellStyleDefinition implements HTML
     }
 
     @Override
-    void border(@DelegatesTo(BorderDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.BorderDefinition") Closure borderConfiguration) {
+    void border(Builder<BorderDefinition> borderConfiguration) {
         checkSealed()
         PoiBorderDefinition poiBorder = findOrCreateBorder()
-        poiBorder.with borderConfiguration
+        borderConfiguration.configure(poiBorder)
 
         Keywords.BorderSide.BORDER_SIDES.each { Keywords.BorderSide side ->
             poiBorder.applyTo(side)
@@ -239,30 +240,28 @@ class PoiCellStyleDefinition extends AbstractCellStyleDefinition implements HTML
     }
 
     @Override
-    void border(Keywords.BorderSide location, @DelegatesTo(BorderDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.BorderDefinition") Closure borderConfiguration) {
+    void border(Keywords.BorderSide location, Builder<BorderDefinition> borderConfiguration) {
         checkSealed()
         PoiBorderDefinition poiBorder = findOrCreateBorder()
-        poiBorder.with borderConfiguration
+        borderConfiguration.configure(poiBorder)
         poiBorder.applyTo(location)
     }
 
     @Override
-    void border(Keywords.BorderSide first, Keywords.BorderSide second,
-                @DelegatesTo(BorderDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.BorderDefinition") Closure borderConfiguration) {
+    void border(Keywords.BorderSide first, Keywords.BorderSide second,Builder<BorderDefinition> borderConfiguration) {
         checkSealed()
         PoiBorderDefinition poiBorder = findOrCreateBorder()
-        poiBorder.with borderConfiguration
+        borderConfiguration.configure(poiBorder)
         poiBorder.applyTo(first)
         poiBorder.applyTo(second)
 
     }
 
     @Override
-    void border(Keywords.BorderSide first, Keywords.BorderSide second, Keywords.BorderSide third,
-                @DelegatesTo(BorderDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.BorderDefinition") Closure borderConfiguration) {
+    void border(Keywords.BorderSide first, Keywords.BorderSide second, Keywords.BorderSide third, Builder<BorderDefinition> borderConfiguration) {
         checkSealed()
         PoiBorderDefinition poiBorder = findOrCreateBorder()
-        poiBorder.with borderConfiguration
+        borderConfiguration.configure(poiBorder);
         poiBorder.applyTo(first)
         poiBorder.applyTo(second)
         poiBorder.applyTo(third)

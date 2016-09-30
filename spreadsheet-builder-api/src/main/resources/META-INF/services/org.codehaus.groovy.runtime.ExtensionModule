@@ -1,0 +1,5 @@
+# This is a generated file, do not edit
+moduleName=spreadsheet-builder-api
+moduleVersion=0.3.1
+extensionClasses=org.modelcatalogue.spreadsheet.builder.api.extensions.SpreadsheetBuilderModule
+staticExtensionClasses=

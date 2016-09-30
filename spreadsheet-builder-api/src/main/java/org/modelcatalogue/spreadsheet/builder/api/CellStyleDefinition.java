@@ -1,9 +1,5 @@
 package org.modelcatalogue.spreadsheet.builder.api;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import groovy.transform.stc.ClosureParams;
-import groovy.transform.stc.FromString;
 import org.modelcatalogue.spreadsheet.api.*;
 
 public interface CellStyleDefinition extends HTMLColorProvider, ForegroundFillProvider {
@@ -18,7 +14,7 @@ public interface CellStyleDefinition extends HTMLColorProvider, ForegroundFillPr
 
     void fill(ForegroundFill fill);
 
-    void font(@DelegatesTo(FontDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.FontDefinition") Closure fontConfiguration);
+    void font(Builder<FontDefinition> fontConfiguration);
 
     /**
      * Sets the indent of the cell in spaces.
@@ -49,14 +45,14 @@ public interface CellStyleDefinition extends HTMLColorProvider, ForegroundFillPr
      * Configures all the borders of the cell.
      * @param borderConfiguration border configuration closure
      */
-    void border(@DelegatesTo(BorderDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.BorderDefinition") Closure borderConfiguration);
+    void border(Builder<BorderDefinition> borderConfiguration);
 
     /**
      * Configures one border of the cell.
      * @param location border to be configured
      * @param borderConfiguration border configuration closure
      */
-    void border(Keywords.BorderSide location, @DelegatesTo(BorderDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.BorderDefinition") Closure borderConfiguration);
+    void border(Keywords.BorderSide location, Builder<BorderDefinition> borderConfiguration);
 
     /**
      * Configures two borders of the cell.
@@ -64,7 +60,7 @@ public interface CellStyleDefinition extends HTMLColorProvider, ForegroundFillPr
      * @param second second border to be configured
      * @param borderConfiguration border configuration closure
      */
-    void border(Keywords.BorderSide first, Keywords.BorderSide second, @DelegatesTo(BorderDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.BorderDefinition") Closure borderConfiguration);
+    void border(Keywords.BorderSide first, Keywords.BorderSide second, Builder<BorderDefinition> borderConfiguration);
 
     /**
      * Configures three borders of the cell.
@@ -73,7 +69,7 @@ public interface CellStyleDefinition extends HTMLColorProvider, ForegroundFillPr
      * @param third third border to be configured
      * @param borderConfiguration border configuration closure
      */
-    void border(Keywords.BorderSide first, Keywords.BorderSide second, Keywords.BorderSide third, @DelegatesTo(BorderDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.BorderDefinition") Closure borderConfiguration);
+    void border(Keywords.BorderSide first, Keywords.BorderSide second, Keywords.BorderSide third, Builder<BorderDefinition> borderConfiguration);
 
     Keywords.PureVerticalAlignment getCenter();
     Keywords.PureVerticalAlignment getJustify();

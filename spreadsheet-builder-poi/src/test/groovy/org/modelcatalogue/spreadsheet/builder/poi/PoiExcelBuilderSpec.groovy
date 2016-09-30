@@ -1,9 +1,11 @@
 package org.modelcatalogue.spreadsheet.builder.poi
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeChecked
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.modelcatalogue.spreadsheet.api.Cell
+import org.modelcatalogue.spreadsheet.builder.api.CellDefinition
 import org.modelcatalogue.spreadsheet.builder.api.SpreadsheetDefinition
 import org.modelcatalogue.spreadsheet.query.api.SpreadsheetCriteria
 import org.modelcatalogue.spreadsheet.builder.api.SpreadsheetBuilder
@@ -303,7 +305,6 @@ class PoiExcelBuilderSpec extends Specification {
 
     }
 
-    @CompileStatic
     private static SpreadsheetDefinition buildSpreadsheet(PoiSpreadsheetBuilder builder, Date today) {
         builder.build {
             style 'red', {

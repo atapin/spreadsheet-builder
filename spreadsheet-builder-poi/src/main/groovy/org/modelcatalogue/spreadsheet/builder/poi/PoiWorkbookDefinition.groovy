@@ -1,12 +1,11 @@
 package org.modelcatalogue.spreadsheet.builder.poi
 
-import groovy.transform.stc.ClosureParams
-import groovy.transform.stc.FromString
 import org.apache.poi.ss.util.WorkbookUtil
 import org.apache.poi.xssf.usermodel.XSSFCell
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.modelcatalogue.spreadsheet.api.Workbook
+import org.modelcatalogue.spreadsheet.builder.api.Builder
 import org.modelcatalogue.spreadsheet.builder.api.CellStyleDefinition
 import org.modelcatalogue.spreadsheet.builder.api.SheetDefinition
 import org.modelcatalogue.spreadsheet.builder.api.SpreadsheetDefinition
@@ -16,7 +15,7 @@ import org.modelcatalogue.spreadsheet.builder.api.WorkbookDefinition
 class PoiWorkbookDefinition implements WorkbookDefinition, Workbook, SpreadsheetDefinition {
 
     private final XSSFWorkbook workbook
-    private final Map<String, Closure> namedStylesDefinition = [:]
+    private final Map<String, Builder<CellStyleDefinition>> namedStylesDefinition = [:]
     private final Map<String, PoiCellStyleDefinition> namedStyles = [:]
     private final Map<String, PoiSheetDefinition> sheets = [:]
     private final List<Resolvable> toBeResolved = []
@@ -26,7 +25,7 @@ class PoiWorkbookDefinition implements WorkbookDefinition, Workbook, Spreadsheet
     }
 
     @Override
-    void sheet(String name, @DelegatesTo(SheetDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.SheetDefinition") Closure sheetDefinition) {
+    void sheet(String name, Builder<SheetDefinition> sheetDefinition) {
         PoiSheetDefinition sheet = sheets[name]
 
         if (!sheet) {
@@ -35,18 +34,18 @@ class PoiWorkbookDefinition implements WorkbookDefinition, Workbook, Spreadsheet
             sheets[name] = sheet
         }
 
-        sheet.with sheetDefinition
+        sheetDefinition.configure(sheet)
 
         sheet.processAutoColumns()
     }
 
     @Override
-    void style(String name, @DelegatesTo(CellStyleDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.CellStyleDefinition") Closure styleDefinition) {
+    void style(String name, Builder<CellStyleDefinition> styleDefinition) {
         namedStylesDefinition[name] = styleDefinition
     }
 
     @Override
-    void apply(Class<Stylesheet> stylesheet) {
+    void apply(Class<? extends Stylesheet> stylesheet) {
         apply stylesheet.newInstance()
     }
 
@@ -67,7 +66,7 @@ class PoiWorkbookDefinition implements WorkbookDefinition, Workbook, Spreadsheet
         }
 
         style = new PoiCellStyleDefinition(this)
-        style.with getStyleDefinition(name)
+        getStyleDefinition(name).configure(style)
         style.seal()
 
         namedStyles[name] = style
@@ -86,7 +85,7 @@ class PoiWorkbookDefinition implements WorkbookDefinition, Workbook, Spreadsheet
 
         style = new PoiCellStyleDefinition(this)
         for (String n in names) {
-            style.with getStyleDefinition(n)
+            getStyleDefinition(n).configure(style)
         }
         style.seal()
 
@@ -95,8 +94,8 @@ class PoiWorkbookDefinition implements WorkbookDefinition, Workbook, Spreadsheet
         return style
     }
 
-    protected Closure getStyleDefinition(String name) {
-        Closure style = namedStylesDefinition[name]
+    protected Builder<CellStyleDefinition> getStyleDefinition(String name) {
+        Builder<CellStyleDefinition> style = namedStylesDefinition[name]
         if (!style) {
             throw new IllegalArgumentException("Style '$name' not defined")
         }

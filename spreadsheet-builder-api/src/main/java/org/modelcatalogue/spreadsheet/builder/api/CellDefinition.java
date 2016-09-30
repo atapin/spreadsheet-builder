@@ -1,9 +1,5 @@
 package org.modelcatalogue.spreadsheet.builder.api;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-import groovy.transform.stc.ClosureParams;
-import groovy.transform.stc.FromString;
 import org.modelcatalogue.spreadsheet.api.Keywords;
 
 public interface CellDefinition extends HasStyle, TableCellDefinition {
@@ -11,7 +7,8 @@ public interface CellDefinition extends HasStyle, TableCellDefinition {
     void name(String name);
     void formula(String formula);
     void comment(String comment);
-    void comment(@DelegatesTo(CommentDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.CommentDefinition") Closure commentDefinition);
+
+    void comment(Builder<CommentDefinition> commentDefinition);
 
     LinkDefinition link(Keywords.To to);
 
@@ -63,7 +60,7 @@ public interface CellDefinition extends HasStyle, TableCellDefinition {
      *
      * @param text new text run
      */
-    void text(String text, @DelegatesTo(FontDefinition.class) @ClosureParams(value=FromString.class, options = "org.modelcatalogue.spreadsheet.builder.api.FontDefinition") Closure fontConfiguration);
+    void text(String text, Builder<FontDefinition> fontConfiguration);
 
     ImageCreator png(Keywords.Image image);
     ImageCreator jpeg(Keywords.Image image);
