@@ -5,13 +5,7 @@ import java.util.List;
 import static org.codehaus.groovy.runtime.DefaultGroovyMethods.reverse;
 import static org.codehaus.groovy.runtime.DefaultGroovyMethods.toList;
 
-public interface Cell {
-
-    int getColumn();
-    Object getValue();
-    String getColumnAsString();
-    <T> T read(Class<T> type);
-    Row getRow();
+public interface Cell extends TableCell<Row, Cell> {
 
     int getRowspan();
     int getColspan();
@@ -19,15 +13,6 @@ public interface Cell {
     String getName();
     Comment getComment();
     CellStyle getStyle();
-
-    Cell getAbove();
-    Cell getBellow();
-    Cell getLeft();
-    Cell getRight();
-    Cell getAboveLeft();
-    Cell getAboveRight();
-    Cell getBellowLeft();
-    Cell getBellowRight();
 
     class Util {
 

@@ -6,6 +6,8 @@ import org.apache.poi.xssf.usermodel.XSSFCell
 import org.apache.poi.xssf.usermodel.XSSFRow
 import org.modelcatalogue.spreadsheet.api.Cell
 import org.modelcatalogue.spreadsheet.api.Row
+import org.modelcatalogue.spreadsheet.api.Sheet
+import org.modelcatalogue.spreadsheet.api.Table
 import org.modelcatalogue.spreadsheet.builder.api.CellDefinition
 import org.modelcatalogue.spreadsheet.builder.api.CellStyleDefinition
 import org.modelcatalogue.spreadsheet.builder.api.RowDefinition
@@ -237,5 +239,10 @@ class PoiRowDefinition implements RowDefinition, Row {
     @Override
     String toString() {
         return "Row[${sheet.name}!${number}]"
+    }
+
+    @Override
+    Sheet getTable() {
+        return sheet
     }
 }

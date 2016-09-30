@@ -1,13 +1,9 @@
 package org.modelcatalogue.spreadsheet.api;
 
-import java.util.Collection;
-
-public interface Sheet {
+public interface Sheet extends Table<Row> {
 
     String getName();
     Workbook getWorkbook();
-
-    Collection<? extends Row> getRows();
 
     Sheet getNext();
     Sheet getPrevious();

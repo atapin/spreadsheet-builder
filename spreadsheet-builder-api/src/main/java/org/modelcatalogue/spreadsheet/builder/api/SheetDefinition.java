@@ -6,12 +6,7 @@ import groovy.lang.DelegatesTo;
 import groovy.transform.stc.ClosureParams;
 import groovy.transform.stc.FromString;
 
-public interface SheetDefinition {
-
-    /**
-     * Crates new empty row.
-     */
-    void row ();
+public interface SheetDefinition extends TableDefinition {
 
     /**
      * Creates new row in the spreadsheet.

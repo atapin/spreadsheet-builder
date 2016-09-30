@@ -6,13 +6,8 @@ import groovy.transform.stc.ClosureParams;
 import groovy.transform.stc.FromString;
 import org.modelcatalogue.spreadsheet.api.Keywords;
 
-public interface CellDefinition extends HasStyle {
+public interface CellDefinition extends HasStyle, TableCellDefinition {
 
-    /**
-     * Sets the value.
-     * @param value new value
-     */
-    void value(Object value);
     void name(String name);
     void formula(String formula);
     void comment(String comment);

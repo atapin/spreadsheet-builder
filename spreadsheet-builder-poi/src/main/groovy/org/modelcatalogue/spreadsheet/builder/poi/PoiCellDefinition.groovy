@@ -17,6 +17,7 @@ import org.codehaus.groovy.runtime.StringGroovyMethods
 import org.modelcatalogue.spreadsheet.api.Cell as SpreadsheetCell
 import org.modelcatalogue.spreadsheet.api.CellStyle
 import org.modelcatalogue.spreadsheet.api.Comment
+import org.modelcatalogue.spreadsheet.api.Table
 import org.modelcatalogue.spreadsheet.builder.api.AbstractCellDefinition
 
 import org.modelcatalogue.spreadsheet.builder.api.CellStyleDefinition
